@@ -11,25 +11,6 @@ import pymysql
 
 yf.pdr_override()
 
-
-# def get_adj_close_data(ticker, data_sd, ed=None):  # Calendar 작업과, start ~ end 까지 데이터 무조건 있게 만듦
-#     extend_sd = str((datetime.strptime(data_sd, '%Y-%m-%d') - relativedelta(days=5)).date())       # 5 days earlier
-#     universe_df = pdr.get_data_yahoo(ticker, extend_sd, ed)['Adj Close']
-#
-#     if ed is None:
-#         calendar1 = pd.date_range(start=extend_sd, end=universe_df.index[-1])
-#         calendar2 = pd.date_range(start=data_sd, end=universe_df.index[-1])
-#     else:
-#         calendar1 = pd.date_range(start=extend_sd, end=ed)
-#         calendar2 = pd.date_range(start=data_sd, end=ed)
-#     universe_df = universe_df.reindex(calendar1)
-#
-#     universe_df = universe_df.fillna(method='ffill')
-#     universe_df = universe_df.reindex(calendar2)
-#
-#     return universe_df
-
-
 def get_adj_close_data(tickers, data_sd, ed=None):  # Calendar 작업과, start ~ end 까지 데이터 무조건 있게 만듦
     extend_sd = str((datetime.strptime(data_sd, '%Y-%m-%d') - relativedelta(days=5)).date())  # 5 days earlier
     if isinstance(tickers, str):
