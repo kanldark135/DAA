@@ -62,7 +62,7 @@ class LAA:
         if self.trade_start_d != str(sma_df.index[0])[:10]:
             exit('SMA data and trade start date unmatched')
 
-        universe_df = base_function.get_final_adj_close_data(self.universe_old, self.universe_new, self.data_start_d)
+        universe_df = base_function.get_final_adj_close_data(self.universe_old, self.universe_new, self.data_start_d, self.end_d)
         weight_df = base_function.get_rebalance_date(universe_df, self.trade_start_d, self.UE_lookback)
         weight_df = pd.concat([weight_df, sma_df], axis=1)
         weight_df.dropna(inplace=True)
@@ -76,7 +76,7 @@ class LAA:
         weight_df['VWO'] = weight_df_copy * 0.4
 
         # TODO universe_df now includes VWO ticker
-        universe_df = base_function.get_final_adj_close_data(self.universe_old + ['VEIEX'], self.universe_new + ['VWO'], self.data_start_d)
+        universe_df = base_function.get_final_adj_close_data(self.universe_old + ['VEIEX'], self.universe_new + ['VWO'], self.data_start_d, self.end_d)
         universe_df = universe_df[~(universe_df.index < weight_df.index[0])]
         universe_df = (universe_df / universe_df.shift(1)).fillna(1)
 

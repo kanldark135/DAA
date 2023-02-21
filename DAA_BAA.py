@@ -66,7 +66,7 @@ class BAA:
         """
         print('BAA running')
 
-        protective_universe = base_function.get_final_adj_close_data(self.protective_universe_old, self.protective_universe_new, self.data_start_d)
+        protective_universe = base_function.get_final_adj_close_data(self.protective_universe_old, self.protective_universe_new, self.data_start_d, self.end_d)
         absolute_momentum = base_function.get_rebalance_date(protective_universe, self.trade_start_d, self.sma_l)
         absolute_momentum = 12 * (absolute_momentum / absolute_momentum.shift(1)) + \
                             4 * (absolute_momentum / absolute_momentum.shift(3)) + \
@@ -85,8 +85,8 @@ class BAA:
             self.offensive_universe_new = self.offensive_universe_12_new
             self.off_top = self.off_top_12                                                                          # declare Number of ETFs to allocate weights in Offensive Universe
 
-        offensive_universe_df = base_function.get_final_adj_close_data(self.offensive_universe_old, self.offensive_universe_new, self.data_start_d)
-        defensive_universe_df = base_function.get_final_adj_close_data(self.defensive_universe_old, self.defensive_universe_new, self.data_start_d)
+        offensive_universe_df = base_function.get_final_adj_close_data(self.offensive_universe_old, self.offensive_universe_new, self.data_start_d, self.end_d)
+        defensive_universe_df = base_function.get_final_adj_close_data(self.defensive_universe_old, self.defensive_universe_new, self.data_start_d, self.end_d)
         universe_df = pd.concat([offensive_universe_df, defensive_universe_df], axis=1)
         universe_df = universe_df.loc[:, ~universe_df.columns.duplicated()]                                        # remove duplicated columns
 

@@ -11,6 +11,7 @@ import pymysql
 
 yf.pdr_override()
 
+
 def get_adj_close_data(tickers, data_sd, ed=None):  # Calendar 작업과, start ~ end 까지 데이터 무조건 있게 만듦
     extend_sd = str((datetime.strptime(data_sd, '%Y-%m-%d') - relativedelta(days=5)).date())  # 5 days earlier
     if isinstance(tickers, str):
@@ -62,9 +63,9 @@ def get_day_return(adj_close_data):
     return day_return_df
 
 
-def get_final_adj_close_data(universe_old, universe_new, data_sd):
+def get_final_adj_close_data(universe_old, universe_new, data_sd, data_ed=None):
 
-    universe_new_df = get_adj_close_data(universe_new, data_sd, None)
+    universe_new_df = get_adj_close_data(universe_new, data_sd, data_ed)
     reverse_universe_new_df = universe_new_df[::-1]
     last = reverse_universe_new_df.isna().idxmax(axis=0).where(reverse_universe_new_df.isna().any(axis=0))
 
@@ -232,7 +233,7 @@ def join_weights_and_get_performances(w_df_list, df_w_list, tc, ed):
 
     # TODO weight_df.columns
     old_tickers = get_old_ticker(weight_df.columns)
-    join_ret = get_final_adj_close_data(old_tickers, weight_df.columns.tolist(), str(weight_df.index[0])[:10])
+    join_ret = get_final_adj_close_data(old_tickers, weight_df.columns.tolist(), str(weight_df.index[0])[:10], ed)
 
     if 'BIL' in join_ret.columns:
         join_ret['BIL'] = join_ret['BIL'].fillna(method='bfill')
@@ -284,7 +285,7 @@ def mix_strategy_bond(w_df, bond_list=None, mix_weight=None, ed=None):
     data_start_d = str((datetime.strptime(trade_start_d, '%Y-%m-%d') - relativedelta(months=12)).date())
 
     old_bond = get_old_ticker(bond_list)
-    bond_momentum = get_final_adj_close_data(old_bond, bond_list, data_start_d)
+    bond_momentum = get_final_adj_close_data(old_bond, bond_list, data_start_d, ed)
 
     if 'BIL' in bond_list:
         bond_momentum['BIL'] = bond_momentum['BIL'].fillna(method='bfill')
@@ -304,12 +305,18 @@ def mix_strategy_bond(w_df, bond_list=None, mix_weight=None, ed=None):
     if len(weight_df) == 1:
         print('series date: {}'.format(str(weight_df.index[0])[:10]))
         print('Got a single weight series - no backtesting')
-        weight_df.to_csv('./Series/{} Mixed Weight Series.csv'.format(str(weight_df.index[0])[:10]))
+
+        if mix_weight == [0.6, 0.4]:
+            weight_df.to_csv('./Series/60_40/{} Mixed Weight Series.csv'.format(str(weight_df.index[0])[:10]))
+        elif mix_weight == [0.7, 0.3]:
+            weight_df.to_csv('./Series/70_30/{} Mixed Weight Series.csv'.format(str(weight_df.index[0])[:10]))
+        else:
+            weight_df.to_csv('./Series/80_20/{} Mixed Weight Series.csv'.format(str(weight_df.index[0])[:10]))
 
         return weight_df, None, None, None, None, None, None, None
 
     old_ticker = get_old_ticker(weight_df.columns)
-    universe_df = get_final_adj_close_data(old_ticker, weight_df.columns.tolist(), str(weight_df.index[0])[:10])
+    universe_df = get_final_adj_close_data(old_ticker, weight_df.columns.tolist(), str(weight_df.index[0])[:10], ed)
     if 'BIL' in universe_df.columns:
         universe_df['BIL'] = universe_df['BIL'].fillna(method='bfill')
     universe_df = (universe_df / universe_df.shift(1)).fillna(1)

@@ -41,8 +41,8 @@ class ADM:
     def execute(self):
         print('ADM running')
 
-        universe_df = base_function.get_final_adj_close_data(self.universe_old, self.universe_new, self.data_start_d)
-        cash_df = base_function.get_final_adj_close_data(self.cash_old, self.cash_new, self.data_start_d)
+        universe_df = base_function.get_final_adj_close_data(self.universe_old, self.universe_new, self.data_start_d, self.end_d)
+        cash_df = base_function.get_final_adj_close_data(self.cash_old, self.cash_new, self.data_start_d, self.end_d)
         all_universe_df = pd.concat([universe_df, cash_df], axis=1)
 
         monthly_df = base_function.get_rebalance_date(all_universe_df, self.trade_start_d, self.lookback_3)     # 월 리벨런싱 일 데이터만 빼오기
@@ -108,7 +108,7 @@ class ADM:
 if __name__ == '__main__':
     # Series should be used for recent days (absence of BIL data)
     Series = False
-    start_date = '2023-01-02'           # Recommended: '2007-02-25', '2007-12-25', '2008-07-25', '2009-12-25'
+    start_date = '2023-01-20'         # Recommended: '2007-02-25', '2007-12-25', '2008-07-25', '2009-12-25'
     end_date = None            # Recommended: None, '2020-12-31', '2022-10-31'
 
     adm = ADM(isSeries=Series, trade_start_d=start_date, end_d=end_date)    # class declaration

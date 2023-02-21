@@ -55,7 +55,7 @@ class FAA:
     def execute(self):
         print('FAA running')
 
-        universe_df = base_function.get_final_adj_close_data(self.universe_old, self.universe_new, self.data_start_d)
+        universe_df = base_function.get_final_adj_close_data(self.universe_old, self.universe_new, self.data_start_d, self.end_d)
         monthly_df = base_function.get_rebalance_date(universe_df, self.trade_start_d, self.R3_lookback)
         momentum_df = monthly_df / monthly_df.shift(self.R1_lookback) + monthly_df / monthly_df.shift(self.R2_lookback) +\
                       monthly_df / monthly_df.shift(self.R3_lookback) - 3
@@ -63,7 +63,7 @@ class FAA:
         universe_df = (universe_df / universe_df.shift(1)).fillna(1)
         universe_df = universe_df - 1   # substitute 1 to get rate of change, for s.d. calculation later
 
-        cash_universe_df = base_function.get_final_adj_close_data(self.cash_old, self.cash_new, self.data_start_d)
+        cash_universe_df = base_function.get_final_adj_close_data(self.cash_old, self.cash_new, self.data_start_d, self.end_d)
         cash_universe_df['BIL'] = cash_universe_df['BIL'].fillna(method='bfill')    # TODO extended BIL length
         cash_df = base_function.get_rebalance_date(cash_universe_df, self.trade_start_d, self.R3_lookback)
         cash_df = cash_df / cash_df.shift(self.R1_lookback) + cash_df / cash_df.shift(self.R2_lookback) +\

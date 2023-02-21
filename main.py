@@ -1,10 +1,11 @@
 import os
-
 import base_function
 import DAA_ADM
 import DAA_BAA
 import DAA_LAA
 import DAA_FAA
+from datetime import datetime, timedelta, date
+from dateutil.relativedelta import relativedelta
 import yfinance as yf
 
 yf.pdr_override()
@@ -13,6 +14,11 @@ tc = 0.0025
 
 class MAIN:
     def __init__(self, isSeries=False, trade_start_d=None, end_d=None):
+        if trade_start_d is None:  # trade_start_d가 지정 되있지 않을떄, 오늘 날짜로 지정
+            trade_start_d = str(date.today().strftime('%Y-%m-%d'))
+        if isSeries:
+            end_d = trade_start_d  # series 찾을 떄는 trade_start_d와 end_d가 같아야 함!
+
         self.Series = isSeries
         self.start_d = trade_start_d
         self.end_d = end_d
@@ -68,13 +74,17 @@ class MAIN:
 if __name__ == "__main__":
     os.makedirs('./Dataframes/', exist_ok=True)
     os.makedirs('./Results/', exist_ok=True)
+    os.makedirs('./Series/', exist_ok=True)
+    os.makedirs('./Series/60_40/', exist_ok=True)
+    os.makedirs('./Series/70_30/', exist_ok=True)
+    os.makedirs('./Series/80_20/', exist_ok=True)
     os.makedirs('./Dataframes/60_40/', exist_ok=True)
     os.makedirs('./Dataframes/70_30/', exist_ok=True)
     os.makedirs('./Dataframes/80_20/', exist_ok=True)
 
     # Series should be used for recent days (absence of BIL data)
-    Series = False
-    start_date = '2022-12-05'   # Recommended: '2007-02-25', '2007-12-25', '2008-07-25', '2009-12-25'
+    Series = True
+    start_date = '2023-02-20'   # Recommended: '2007-02-25', '2007-12-25', '2008-07-25', '2009-12-25'
     end_date = None      # Recommended: None, '2020-12-31', '2022-10-31'
 
     main = MAIN(isSeries=Series, trade_start_d=start_date, end_d=end_date)
