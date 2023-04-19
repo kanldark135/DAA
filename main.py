@@ -50,25 +50,33 @@ class MAIN:
         if not self.Series:
             base_function.plot(laa_tr, laa_mdd, laa_tr_tc, laa_mdd_tc, laa_tc, 'Lethargic Asset Allocation', 'LAA.png')
 
+
         df_list = [adm_w, baa4_w, baa12_w, faa_w, laa_w]
         w_list = [0.15, 0.35, 0.15, 0.15, 0.2]
+        
+        
         join_w, join_wr, join_wr_tc, join_tr, join_tr_tc, join_mdd, join_mdd_tc, join_tc = base_function.join_weights_and_get_performances(df_list, w_list, tc, self.end_d)
         if not self.Series:
             base_function.plot(join_tr, join_mdd, join_tr_tc, join_mdd_tc, join_tc, 'ADM + BAA(A) + BAA(B) + FAA + LAA', 'UAA (0.15.0.35.0.15.0.15.0.2).png')
 
-        join_w2, _, _, mix_tr, mix_tr_tc, mix_mdd, mix_mdd_tc, mix_tc = base_function.mix_strategy_bond(w_df=join_w, bond_list=['SHY', 'BIL'], mix_weight=[0.6, 0.4], ed=self.end_d)
-        if not self.Series:
-            base_function.plot(mix_tr, mix_mdd, mix_tr_tc, mix_mdd_tc, mix_tc, 'ADM + BAA(A) + BAA(B) + FAA + LAA (0.6) + Bond(0.4)', 'UAA (0.15.0.35.0.15.0.15.0.2) 0.6.png')
 
-        _, _, _, mix_tr, mix_tr_tc, mix_mdd, mix_mdd_tc, mix_tc = base_function.mix_strategy_bond(w_df=join_w, bond_list=['SHY', 'BIL'], mix_weight=[0.7, 0.3], ed=self.end_d)
+        join_w2, _, _, mix_tr, mix_tr_tc_2, mix_mdd, mix_mdd_tc_2, mix_tc = base_function.mix_strategy_bond(w_df=join_w, bond_list=['SHY', 'BIL'], mix_weight=[0.8, 0.2], ed=self.end_d)
         if not self.Series:
-            base_function.plot(mix_tr, mix_mdd, mix_tr_tc, mix_mdd_tc, mix_tc, 'ADM + BAA(A) + BAA(B) + FAA + LAA (0.7) + Bond(0.3)', 'UAA (0.15.0.35.0.15.0.15.0.2) 0.7.png')
+            base_function.plot(mix_tr, mix_mdd, mix_tr_tc_2, mix_mdd_tc_2, mix_tc, 'ADM + BAA(A) + BAA(B) + FAA + LAA (0.8) + Bond(0.2)', 'UAA (0.15.0.35.0.15.0.15.0.2) 0.8.png')
 
-        join_w3, _, _, mix_tr, mix_tr_tc, mix_mdd, mix_mdd_tc, mix_tc = base_function.mix_strategy_bond(w_df=join_w, bond_list=['SHY', 'BIL'], mix_weight=[0.8, 0.2], ed=self.end_d)
+
+        join_w3, _, _, mix_tr, mix_tr_tc_3, mix_mdd, mix_mdd_tc_3, mix_tc = base_function.mix_strategy_bond(w_df=join_w, bond_list=['SHY', 'BIL'], mix_weight=[0.6, 0.4], ed=self.end_d)
         if not self.Series:
-            base_function.plot(mix_tr, mix_mdd, mix_tr_tc, mix_mdd_tc, mix_tc, 'ADM + BAA(A) + BAA(B) + FAA + LAA (0.8) + Bond(0.2)', 'UAA (0.15.0.35.0.15.0.15.0.2) 0.8.png')
+            base_function.plot(mix_tr, mix_mdd, mix_tr_tc_3, mix_mdd_tc_3, mix_tc, 'ADM + BAA(A) + BAA(B) + FAA + LAA (0.6) + Bond(0.4)', 'UAA (0.15.0.35.0.15.0.15.0.2) 0.6.png')
+            
 
-        return join_w, join_w3, join_w2     # TODO (적극형, 위험형, 안전형)
+# =============================================================================
+#         _, _, _, mix_tr, mix_tr_tc, mix_mdd, mix_mdd_tc, mix_tc = base_function.mix_strategy_bond(w_df=join_w, bond_list=['SHY', 'BIL'], mix_weight=[0.7, 0.3], ed=self.end_d)
+#         if not self.Series:
+#             base_function.plot(mix_tr, mix_mdd, mix_tr_tc, mix_mdd_tc, mix_tc, 'ADM + BAA(A) + BAA(B) + FAA + LAA (0.7) + Bond(0.3)', 'UAA (0.15.0.35.0.15.0.15.0.2) 0.7.png')
+# =============================================================================
+        return join_w, join_tr_tc, base_function.get_krw(join_tr_tc), join_mdd_tc, join_w2, mix_tr_tc_2, base_function.get_krw(mix_tr_tc_2), mix_mdd_tc_2, join_w3, mix_tr_tc_3, base_function.get_krw(mix_tr_tc_3), mix_mdd_tc_3    # TODO (적극형, 위험형, 안전형)
+    
 
 
 if __name__ == "__main__":
@@ -83,9 +91,9 @@ if __name__ == "__main__":
     os.makedirs('./Dataframes/80_20/', exist_ok=True)
 
     # Series should be used for recent days (absence of BIL data)
-    Series = True
-    start_date = '2023-02-20'   # Recommended: '2007-02-25', '2007-12-25', '2008-07-25', '2009-12-25'
+    Series = False
+    start_date = '2004-03-31'   # Recommended: '2007-02-25', '2007-12-25', '2008-07-25', '2009-12-25'
     end_date = None      # Recommended: None, '2020-12-31', '2022-10-31'
 
     main = MAIN(isSeries=Series, trade_start_d=start_date, end_d=end_date)
-    join_w1, join_w2, join_w3 = main.execute()
+    w1, w1_tr, w1_tr_krw, w1_mdd, w2, w2_tr, w2_tr_krw, w2_mdd, w3, w3_tr, w3_tr_krw, w3_mdd = main.execute()
